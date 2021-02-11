@@ -1,11 +1,11 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
   getSystemHealth(): string {
-    console.debug("System Online!");
+    console.debug('System Online!');
 
-    	return "System Online!";
+    return 'System Online!';
   }
 
   getVersion(): Record<string, unknown> {

@@ -9,5 +9,5 @@ module.exports = {
     'prettier/prettier': 'error',
     '@typescript-eslint': 'off',
   },
-  plugins: [`"prettier"`],
+  plugins: ['prettier'],
 };
