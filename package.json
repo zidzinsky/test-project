@@ -84,7 +84,8 @@
   },
   "lint-staged": {
     "**/*.ts": [
-      "eslint src/ --fix --ext ts"
+      "eslint src/ --fix --ext ts",
+      "git add"
     ]
   }
 }
