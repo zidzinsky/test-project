@@ -5,7 +5,7 @@ export class AppService {
   getSystemHealth(): string {
     console.debug("System Online!");
 
-    return "System Online!";
+    	return "System Online!";
   }
 
   getVersion(): Record<string, unknown> {
