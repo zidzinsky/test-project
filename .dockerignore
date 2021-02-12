@@ -22,12 +22,21 @@ lerna-debug.log*
 *.launch
 .settings/
 *.sublime-workspace
+.editorconfig
+.prettierrc
+.prettierrc.*
 
 # IDE - VSCode
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
 /src/security/ServiceAccount.json
 /ServiceAccount.json
+
+# Markdown files
+*.md
+
+# Git
+.git
+.gitignore
+
+# Eslint
+.eslintrc.*
