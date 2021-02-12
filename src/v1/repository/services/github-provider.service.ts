@@ -1,11 +1,9 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Octokit } from '@octokit/rest';
-import { Endpoints } from '@octokit/types';
 import * as parse from 'parse-link-header';
 import { BranchDto, RepoDto } from '../dto/repos.dto';
 import { SortEnum } from '../enum';
 
-type listUserReposResponse = Endpoints['GET /repos/{owner}/{repo}']['response'];
 type BranchList = { repo: string; branches: BranchDto[] };
 
 const pageLimit = { page: 1, per_page: 50 };
@@ -18,32 +16,33 @@ export class GitHubProviderService {
     this.octokit = new Octokit();
   }
 
-  public async listRepos(username): Promise<RepoDto[]> {
+  public async listRepos(username: string): Promise<RepoDto[]> {
     try {
+      await this.getUser(username);
+
       const reposMap: Map<string, RepoDto> = new Map();
       const promiseArr: Promise<BranchList>[] = [];
+      const q = `user:${username} fork:false`;
       let next: parse.Link = ({ ...pageLimit } as unknown) as parse.Link;
 
       while (next) {
-        const { data = [], headers = {} } = await this.octokit.repos.listForUser({
-          username,
+        const { data, headers = {} } = await this.octokit.search.repos({
+          q,
           sort: SortEnum.Updated,
           page: +next.page,
           per_page: +next.per_page,
         });
+        const { items = [] } = data;
 
-        data
-          .filter((v) => !v.fork)
-          .reduce((acc, v) => {
-            promiseArr.push(this.listBranches(v.owner.login, v.name));
-
-            acc.set(v.name, {
-              name: v.name,
-              owner: v.owner.login,
-              branches: [],
-            });
-            return acc;
-          }, reposMap);
+        items.reduce((acc, v) => {
+          promiseArr.push(this.listBranches(v.owner.login, v.name));
+          acc.set(v.name, {
+            name: v.name,
+            owner: v.owner.login,
+            branches: [],
+          });
+          return acc;
+        }, reposMap);
 
         const parsedLink: parse.Links = parse(headers['link']);
         next = parsedLink?.next;
@@ -58,11 +57,15 @@ export class GitHubProviderService {
 
       return [...reposMap.values()];
     } catch (error) {
-      throw new HttpException(error.message, error.status);
+      const message =
+        error.status == HttpStatus.NOT_FOUND
+          ? `Not fork repositories for user '${username}' are not found`
+          : error.message;
+      throw new HttpException(message, error.status);
     }
   }
 
-  public async listBranches(owner: string, repo: string): Promise<BranchList> {
+  private async listBranches(owner: string, repo: string): Promise<BranchList> {
     const branchList: BranchDto[] = [];
     let next: parse.Link = ({ ...pageLimit } as unknown) as parse.Link;
 
@@ -91,5 +94,13 @@ export class GitHubProviderService {
       repo,
       branches: branchList,
     };
+  }
+
+  private async getUser(username: string): Promise<any> {
+    const { data } = await this.octokit.users.getByUsername({
+      username,
+    });
+
+    return data;
   }
 }
