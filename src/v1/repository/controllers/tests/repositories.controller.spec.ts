@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HttpModule } from '@nestjs/common';
 import { RepositoriesController } from '../repositories.controller';
 import { AppModule } from '../../../../app.module';
 import { RepositoriesService } from '../../services/repositories.service';
@@ -13,7 +12,7 @@ describe('RepositoriesController', () => {
   beforeAll(async () => {
     app = await Test.createTestingModule({
       controllers: [RepositoriesController],
-      imports: [AppModule, HttpModule],
+      imports: [AppModule],
       providers: [RepositoriesService, GitHubProviderService],
     })
       .overrideProvider(RepositoriesService)
