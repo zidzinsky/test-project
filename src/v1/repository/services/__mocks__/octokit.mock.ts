@@ -1,9 +1,12 @@
 export class OctokitMock {
-  constructor() {}
-
-  publicsearch = {
+  public search = {
     repos: () => {
-      return repoMock;
+      return {
+        headers: {},
+        data: {
+          items: [repoMock],
+        },
+      };
     },
   };
 }
@@ -12,7 +15,7 @@ export const testRepoName = 'test_repo';
 
 export const repoMock = {
   name: testRepoName,
-  owner: 'test_user',
+  owner: { login: 'test_user' },
 };
 
 export const branchMock = {

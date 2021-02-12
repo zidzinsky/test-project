@@ -3,6 +3,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { OctokitMock, repoMock, branchMock } from '../__mocks__/octokit.mock';
 import { AppModule } from '../../../../app.module';
+
+jest.mock('@octokit/rest', () => {
+  return {
+    Octokit: OctokitMock,
+  };
+});
+
 import { GitHubProviderService } from '../../services/github-provider.service';
 
 describe('GitHubProviderService', () => {
@@ -31,10 +38,14 @@ describe('GitHubProviderService', () => {
 
       const username = 'test_user';
       const response = await service.listRepos(username);
-      const expected = {
-        ...repoMock,
-        branches: [...branchMock.branches],
-      };
+      const expected = [
+        {
+          ...repoMock,
+          owner: repoMock.owner.login,
+          branches: [...branchMock.branches],
+        },
+      ];
+
       expect(response).toEqual(expected);
     });
   });
