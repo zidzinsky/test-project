@@ -1,7 +1,7 @@
-import { Controller, Get, Headers, Param, Query, DefaultValuePipe, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Headers, Param } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { RepositoriesService } from '../services/repositories.service';
-import { RepoDto, GetReposDto } from '../dto/repos.dto';
+import { RepoDto } from '../dto/repos.dto';
 import { acceptHeaderValidation } from '../../../common/helpers';
 
 @Controller('v1/repositories')

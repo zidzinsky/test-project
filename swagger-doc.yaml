@@ -10,6 +10,18 @@ tags:
 servers: []
 components:
   schemas:
+    BranchDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: dev
+        lastCommit:
+          type: string
+          example: f0bb5942f47193d153a205dc089cbbf38299dd1a
+      required:
+        - name
+        - lastCommit
     RepoDto:
       type: object
       properties:
@@ -20,10 +32,9 @@ components:
           type: string
           example: testuser
         branches:
-          example: []
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/BranchDto'
       required:
         - name
         - owner
@@ -39,7 +50,7 @@ paths:
           description: System is online and healthy
         '403':
           description: Forbidden
-      tags: &ref_0
+      tags:
         - system
   /version:
     get:
@@ -51,7 +62,8 @@ paths:
           description: Success
         '403':
           description: Forbidden
-      tags: *ref_0
+      tags:
+        - system
   '/v1/repositories/{username}':
     get:
       operationId: RepositoriesController_getRepositories
