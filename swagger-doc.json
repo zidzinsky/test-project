@@ -1,0 +1,122 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "test-project",
+        "description": "Test app to call Github API",
+        "version": "v1",
+        "contact": {}
+    },
+    "tags": [
+        {
+            "name": "beta",
+            "description": ""
+        }
+    ],
+    "servers": [],
+    "components": {
+        "schemas": {
+            "RepoDto": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "TestRepo"
+                    },
+                    "owner": {
+                        "type": "string",
+                        "example": "testuser"
+                    },
+                    "branches": {
+                        "example": [],
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "name",
+                    "owner",
+                    "branches"
+                ]
+            }
+        }
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "AppController_getSystemHealth",
+                "summary": "Check if app is healthy",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "System is online and healthy"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "tags": [
+                    "system"
+                ]
+            }
+        },
+        "/version": {
+            "get": {
+                "operationId": "AppController_getVersion",
+                "summary": "Current version of app",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "tags": [
+                    "system"
+                ]
+            }
+        },
+        "/v1/repositories/{username}": {
+            "get": {
+                "operationId": "RepositoriesController_getRepositories",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RepoDto"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request: Validation failed for the request."
+                    },
+                    "404": {
+                        "description": "Not Found: Consumer is not found"
+                    },
+                    "406": {
+                        "description": "Not Acceptable"
+                    }
+                }
+            }
+        }
+    }
+}
